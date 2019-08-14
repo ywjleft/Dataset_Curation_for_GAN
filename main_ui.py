@@ -10,11 +10,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-experiment_name', default='{}_analyze'.format(int(time.time())))
 parser.add_argument('-gpuid', default='0')
 parser.add_argument('-enable_simul', type=bool, default=False)
+parser.add_argument('-datatype', default='face')
 
 argsk, argsu = parser.parse_known_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = argsk.gpuid
 
-outputpath = '/home/F/v-wenye/exp_release/{}'.format(argsk.experiment_name) # change this path to the folder you want to write output files
+from config import outputroot
+outputpath = os.path.join(outputroot, argsk.experiment_name)
 os.makedirs(outputpath, exist_ok=True)
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -25,7 +27,7 @@ app.secret_key = b'\x05:#\xe9\xb0fe\xe7\x96\x0fi\xeb\x7fF\xc1\xda'
 from curation_system import curation_system
 
 currentuid = '{}'.format(int(time.time()))
-system = curation_system(len(argsk.gpuid.split(',')), 'face', currentuid, outputpath, argsk.enable_simul)
+system = curation_system(len(argsk.gpuid.split(',')), argsk.datatype, currentuid, outputpath, argsk.enable_simul)
 
 
 def background_calculation(userinput):
