@@ -24,10 +24,14 @@ context.load_cert_chain('cert.cert', 'key.key')
 app = Flask(__name__)
 app.secret_key = b'\x05:#\xe9\xb0fe\xe7\x96\x0fi\xeb\x7fF\xc1\xda'
 
-from curation_system import curation_system
-
 currentuid = '{}'.format(int(time.time()))
-system = curation_system(len(argsk.gpuid.split(',')), argsk.datatype, currentuid, outputpath, argsk.enable_simul)
+
+if argsk.datatype in ['face', 'bedroom']:
+    from curation_system import curation_system
+    system = curation_system(len(argsk.gpuid.split(',')), argsk.datatype, currentuid, outputpath, argsk.enable_simul)
+elif argsk.datatype in ['wood', 'metal', 'stone']:
+    from curation_system_texture import curation_system
+    system = curation_system(len(argsk.gpuid.split(',')), argsk.datatype, currentuid, outputpath, argsk.enable_simul)
 
 
 def background_calculation(userinput):

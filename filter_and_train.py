@@ -52,7 +52,7 @@ elif argsk.datatype == 'bedroom':
             if np.mean(testresults[j] > 0.667):
                 cv2.imwrite(os.path.join(outputpath, '{}.png'.format(passed)), images[j] * 255)
                 passed += 1
-                if passed == 50000:
+                if passed == 20000:
                     flag = False
                     break
 

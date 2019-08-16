@@ -49,14 +49,14 @@ def saveSepImage(prefex, images):
 
 class curation_system:
 
-    def __init__(self, n_gpu, datatype, uid=None, output_path=None, enable_simul=None, start_posz=None, start_negz=None, classifier_only=False):
+    def __init__(self, n_gpu, datatype, uid=None, output_path=None, enable_simul=None, start_posx=None, start_negx=None, classifier_only=False):
         self.n_gpu = n_gpu
         self.datatype = datatype
         self.uid = uid
         self.output_path = output_path
         self.enable_simul = enable_simul
-        self.start_posz = start_posz
-        self.start_negz = start_negz
+        self.start_posx = start_posx
+        self.start_negx = start_negx
 
         #setup tf
         cfg = tf.ConfigProto()
@@ -174,18 +174,16 @@ class curation_system:
         os.makedirs('./static/RAMDISK/{}'.format(self.uid))
         self.status = 1
         self.round = 0
-        if not self.start_posz is None:
-            self.posz += [self.start_posz]
+        if not self.start_posx is None:
             precomputed_augmented_images = np.zeros((128,self.img_size_for_fm,self.img_size_for_fm,3))
             for j in range(128):
-                precomputed_augmented_images[j] = self.augment(self.gens(self.start_posz[np.newaxis,...])[0])
+                precomputed_augmented_images[j] = self.augment(self.start_posx)
             precomputed_fms = self.extract_features(precomputed_augmented_images)
             self.posfms += [precomputed_fms,]
-        if not self.start_negz is None:
-            self.negz += [self.start_negz]
+        if not self.start_negx is None:
             precomputed_augmented_images = np.zeros((128,self.img_size_for_fm,self.img_size_for_fm,3))
             for j in range(128):
-                precomputed_augmented_images[j] = self.augment(self.gens(self.start_negz[np.newaxis,...])[0])
+                precomputed_augmented_images[j] = self.augment(self.start_negz)
             precomputed_fms = self.extract_features(precomputed_augmented_images)
             self.negfms += [precomputed_fms,]
 
@@ -311,15 +309,11 @@ class curation_system:
             image = cv2.resize(image[x0:(256-x1),y0:(256-y1)], (224,224))
             return image
 
-    def genBatch(self, posfms, negfms, midfms, bs):
+    def genBatch(self, posfms, negfms, bs):
         featurebatch = np.zeros((bs,self.featuremap_size))
         labelbatch = np.zeros((bs,2))
-        ratemid = min(len(midfms) / (len(posfms) + len(negfms)), 0.0)
         for i in range(bs):
-            if np.random.rand() < ratemid:
-                featurebatch[i] = midfms[np.random.randint(len(midfms))]
-                labelbatch[i] = (0.5,0.5)
-            elif np.random.randint(2) == 1:
+            if np.random.randint(2) == 1:
                 featurebatch[i] = posfms[np.random.randint(len(posfms))]
                 labelbatch[i] = (1.0,0.0)
             else:
@@ -332,11 +326,10 @@ class curation_system:
         self.logger.info('Start training.')
         posfms = np.reshape(self.posfms, (-1, self.featuremap_size))
         negfms = np.reshape(self.negfms, (-1, self.featuremap_size))
-        midfms = np.reshape(self.midfms, (-1, self.featuremap_size))
 
         loss_sum = np.zeros(4)
         for i in range(1, iters+1):
-            featurebatch, labelbatch = self.genBatch(posfms, negfms, midfms, 32*4)
+            featurebatch, labelbatch = self.genBatch(posfms, negfms, 32*4)
             feeddict = {self.feature_phs[0]:featurebatch[0:32], self.feature_phs[1]:featurebatch[32:2*32], self.feature_phs[2]:featurebatch[2*32:3*32], self.feature_phs[3]:featurebatch[3*32:4*32], self.pref_phs[0]:labelbatch[0:32], self.pref_phs[1]:labelbatch[32:2*32], self.pref_phs[2]:labelbatch[2*32:3*32], self.pref_phs[3]:labelbatch[3*32:4*32]}
             runout = self.sess.run(self.losses + self.trainops, feed_dict=feeddict)
             loss_sum += np.mean(runout[0:4], axis=1)
@@ -478,13 +471,13 @@ class curation_system:
                 precomputed_augmented_images[j] = self.augment(xs[i])
             precomputed_fms = self.extract_features(precomputed_augmented_images)
             if userinput[i] == '2':
-                self.posz += [zs[i]]
+                self.posz += [zs[i].copy()]
                 self.posfms += [precomputed_fms,]
             elif userinput[i] == '0':
-                self.negz += [zs[i]]
+                self.negz += [zs[i].copy()]
                 self.negfms += [precomputed_fms,]
             elif userinput[i] == '1':
-                self.midz += [zs[i]]
+                self.midz += [zs[i].copy()]
                 self.midfms += [precomputed_fms,]
         np.save(os.path.join(self.output_path, 'labeled_zs'), (self.posz,self.negz,self.midz))
 
