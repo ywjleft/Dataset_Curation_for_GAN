@@ -201,7 +201,7 @@ class curation_system:
                     with tf.device('/gpu:{}'.format(gid)):
                         tf_real_input = tf.placeholder(tf.float32, shape=[self.bs_gan_gpu, self.imageres, self.imageres, 3])
                         tf_d_real = net_d.forward(tf_real_input*2-1)
-                        tf_d_fake = net_d.forward(tf_fake_image_allgpu[gid])
+                        tf_d_fake = net_d.forward(tf_fake_image_allgpu[gid]*2-1)
 
                         self.tf_real_input_allgpu.append(tf_real_input)
                         tf_d_real_allgpu.append(tf_d_real)
@@ -450,11 +450,11 @@ class curation_system:
             poscnt = len(self.posz) + (not self.start_posx is None)
             negcnt = len(self.negz) + (not self.start_negx is None)
             if poscnt >= 1 and negcnt >= 1:
-                self.trainDis(500, ifsave=True)
+                self.trainDis(5000, ifsave=True)
                 self.status = 2
 
         elif self.status == 2:
-            self.trainDis(250, ifsave=True)
+            self.trainDis(2500, ifsave=True)
 
     def sendData(self, poszs, negzs, midzs = []):
         self.posz = poszs

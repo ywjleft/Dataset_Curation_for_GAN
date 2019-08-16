@@ -27,8 +27,9 @@ from curation_system_texture import curation_system, saveBigImage
 
 system = curation_system(len(argsk.gpuid.split(',')), argsk.datatype, output_path=outputpath, classifier_only=True)
 system.saver_userdis.restore(system.sess, argsk.classifier_model)
+system.logger.info('Restored: {}'.format(argsk.classifier_model))
 
-
+system.logger.info('Generating training data...')
 dataset = np.zeros([argsk.classifier_n_gen, system.imageres, system.imageres, 3], np.float32)
 pointer = 0
 flag = True
@@ -45,8 +46,8 @@ while flag:
                 flag = False
                 break
 
-saveBigImage(os.path.join(outputpath, 'training_data_sample.png'), dataset[:128], 8, 16)
-system.logger.info('shape of all data: {}'.format(np.shape(dataset)))
+saveBigImage(os.path.join(outputpath, 'training_data_sample.png'), dataset[:128]**(1/2.2), 8, 16)
+system.logger.info('Generation finished, shape of all data: {}'.format(np.shape(dataset)))
 
 input_gaussian_array = np.random.normal(size = [128, 200])
 
