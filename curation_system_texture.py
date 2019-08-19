@@ -100,7 +100,7 @@ class curation_system:
                         self.tf_test_image_allgpu.append(tf_test_image)
 
             tf_saver = tf.train.Saver()
-            tf_saver.restore(self.sess, './datasources/{}.tfmodel'.format(datatype))
+            tf_saver.restore(self.sess, './data/{}.tfmodel'.format(datatype))
 
             # create classifier for user preference
             classifier = getattr(net_texture_gan, 'image_classifier_half')
@@ -254,7 +254,7 @@ class curation_system:
                         self.apply_gradient_op_g = tf_G_solver.apply_gradients(grad_avg_g)
 
             self.tf_saver = tf.train.Saver()
-            self.tf_saver.restore(self.sess, './datasources/{}.tfmodel'.format(datatype))
+            self.tf_saver.restore(self.sess, './data/{}.tfmodel'.format(datatype))
 
 
             # create classifier for user preference
@@ -316,7 +316,7 @@ class curation_system:
                 labelbatch[i] = (0.0,1.0)
         return imagebatch, labelbatch
 
-    def trainDis(self, iters, ifsave=False, filename='model.ckpt'):
+    def trainDis(self, iters, ifsave=False):
         posx256 = self.gens(self.posz)
         negx256 = self.gens(self.negz)
         posx = np.array([cv2.resize(posx256[i], (128,128)) for i in range(len(self.posz))])
@@ -340,7 +340,7 @@ class curation_system:
 
         self.logger.info('Training finished.')
         if ifsave:
-            self.saver_userdis.save(self.sess, os.path.join(self.output_path, 'model_{}.ckpt'.format(self.uid)))
+            self.saver_userdis.save(self.sess, os.path.join(self.output_path, 'model.ckpt'))
             self.logger.info('Saved.')
 
     def test_by_images(self, images):

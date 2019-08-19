@@ -105,9 +105,9 @@ sched.G_lrate_dict = {128: 0.0015, 256: 0.002, 512: 0.003, 1024: 0.003}
 sched.D_lrate_dict = EasyDict(sched.G_lrate_dict)
 
 if argsk.datatype == 'face':
-    train.resume_run_id = './datasources/karras2019stylegan-ffhq-1024x1024.pkl'
+    train.resume_run_id = './data/karras2019stylegan-ffhq-1024x1024.pkl'
 elif argsk.datatype == 'bedroom':
-    train.resume_run_id = './datasources/karras2019stylegan-bedrooms-256x256.pkl'
+    train.resume_run_id = './data/karras2019stylegan-bedrooms-256x256.pkl'
 
 kwargs = EasyDict(train)
 kwargs.update(G_args=G, D_args=D, G_opt_args=G_opt, D_opt_args=D_opt, G_loss_args=G_loss, D_loss_args=D_loss)

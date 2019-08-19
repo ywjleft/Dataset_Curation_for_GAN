@@ -77,11 +77,11 @@ class curation_system:
             self.featuremap_size = self.featuremap.get_shape()[1]
             self.img_size_for_fm = 160
             facenetloader = tf.train.Saver()
-            facenetloader.restore(tf.get_default_session(), './datasources/model-20180402-114759.ckpt-275')
+            facenetloader.restore(tf.get_default_session(), './data/model-20180402-114759.ckpt-275')
 
             if not classifier_only:
-                if os.path.isfile('./datasources/ffhq256.npy'):
-                    self.allimages = np.load('./datasources/ffhq256.npy')
+                if os.path.isfile('./data/ffhq256.npy'):
+                    self.allimages = np.load('./data/ffhq256.npy')
                 else:
                     from config import ffhq_path
                     imagefiles = glob.glob(os.path.join(ffhq_path, '*'))
@@ -89,16 +89,16 @@ class curation_system:
                     self.allimages = np.zeros((cnt,256,256,3), np.uint8)
                     for i in range(cnt):
                         self.allimages[i] = cv2.resize(cv2.imread(imagefiles[i]), (256,256))
-                    np.save('./datasources/ffhq256.npy', self.allimages)
+                    np.save('./data/ffhq256.npy', self.allimages)
 
-                if os.path.isfile('./datasources/allfeatures.npy'):
-                    self.allfeatures = np.load('./datasources/allfeatures.npy')
+                if os.path.isfile('./data/allfeatures.npy'):
+                    self.allfeatures = np.load('./data/allfeatures.npy')
                 else:
                     self.allfeatures = np.zeros((len(self.allimages), self.featuremap_size), np.float32)
                     for i in range(int(np.ceil(len(self.allimages)/32))):
                         images = self.allimages[i*32:(i+1)*32][:,29:189,9:169,:] / 255.0
                         self.allfeatures[i*32:(i+1)*32] = self.extract_features(images)
-                    np.save('./datasources/allfeatures.npy', self.allfeatures)
+                    np.save('./data/allfeatures.npy', self.allfeatures)
 
                 self.build_userdis_classifier()
                 self.init_general()
@@ -112,7 +112,7 @@ class curation_system:
 
             import dnnlib
             import dnnlib.tflib as tflib
-            _G, _D, self.Gs = pickle.load(open('./datasources/karras2019stylegan-bedrooms-256x256.pkl', 'rb'))
+            _G, _D, self.Gs = pickle.load(open('./data/karras2019stylegan-bedrooms-256x256.pkl', 'rb'))
             self.fmt = dict(func=tflib.convert_images_to_uint8, nchw_to_nhwc=True)
             self.zdim = self.Gs.input_shape[1]
 
@@ -122,7 +122,7 @@ class curation_system:
 
             import vgg16
             self.vgg16input = tf.placeholder("float", [None, 224, 224, 3])
-            self.vgg = vgg16.Vgg16('./datasources/vgg16.npy')
+            self.vgg = vgg16.Vgg16('./data/vgg16.npy')
             with tf.name_scope("vgg16"):
                 self.vgg.build(self.vgg16input)
 
@@ -322,7 +322,7 @@ class curation_system:
 
         return featurebatch, labelbatch
 
-    def trainDis(self, iters, ifsave=False, filename='model.ckpt'):
+    def trainDis(self, iters, ifsave=False):
         self.logger.info('Start training.')
         posfms = np.reshape(self.posfms, (-1, self.featuremap_size))
         negfms = np.reshape(self.negfms, (-1, self.featuremap_size))
@@ -340,7 +340,7 @@ class curation_system:
 
         self.logger.info('Training finished.')
         if ifsave:
-            self.saver_userdis.save(self.sess, os.path.join(self.output_path, 'model_{}.ckpt'.format(self.uid)))
+            self.saver_userdis.save(self.sess, os.path.join(self.output_path, 'model.ckpt'))
             self.logger.info('Saved.')
 
     def test_by_zs(self, zs):
