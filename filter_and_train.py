@@ -38,7 +38,7 @@ if argsk.datatype == 'face':
         images = np.array([cv2.resize(cv2.imread(imagefiles[j]),(160,160)) / 255.0 for j in range(low,high)])
         testresults = classifier.test_by_images(images)
         for j in range(low, high):
-            if np.mean(testresults[j-low] > 0.667):
+            if np.mean(testresults[j-low]) > 0.667:
                 shutil.copy2(imagefiles[j], os.path.join(outputpath, imagefiles[j].split('/')[-1]))
 
 elif argsk.datatype == 'bedroom':
@@ -49,7 +49,7 @@ elif argsk.datatype == 'bedroom':
         images = classifier.gens(zs)
         testresults = classifier.test_by_images(images)
         for j in range(32):
-            if np.mean(testresults[j] > 0.667):
+            if np.mean(testresults[j]) > 0.667:
                 cv2.imwrite(os.path.join(outputpath, '{}.png'.format(passed)), images[j] * 255)
                 passed += 1
                 if passed == 20000:
