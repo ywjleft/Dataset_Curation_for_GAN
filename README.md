@@ -6,7 +6,7 @@ The main contributors of this repository include Wenjie Ye, [Yue Dong](http://yu
 
 This repository provides a reference implementation for the PG 2019 paper "Interactive Curation of Datasets for Training and Refining Generative Models".
 
-More information (including a copy of the paper) can be found at *****.
+More information (including a copy of the paper) can be found at http://msraig.info/~Curation/Curation.htm.
 
 ## Citation
 If you use our code or models, please cite:
@@ -47,7 +47,7 @@ If you use our code or models, please cite:
 
 - If you want to experiment with wood, metal and stone texture images:
 
-    Download pretrained GAN models from ***** and put them into "data" folder. 
+    Download pretrained texture GAN models from http://msraig.info/~Curation/Curation.htm and extract them into "data" folder. 
 
 #### Configuration
 - Modify the "config.py" file.
