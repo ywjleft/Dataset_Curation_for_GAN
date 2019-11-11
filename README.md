@@ -19,7 +19,6 @@ If you use our code or models, please cite:
  journal = {Computer Graphics Forum},
  volume = {38},
  number = {7},
- pages = {***--***},
  }
 ```
 
@@ -30,7 +29,7 @@ If you use our code or models, please cite:
 - A Linux system with python Tensorflow-GPU environment. 
 
 ### Preparations
-##### Prepare necessary code and data.
+#### Prepare necessary code and data.
 - Clone this repository.
 - If you want to experiment with FFHQ face images:
 
@@ -44,15 +43,13 @@ If you use our code or models, please cite:
 
     Download pretrained StyleGAN bedroom model named "stylegan-bedrooms-256x256.pkl" from https://github.com/NVlabs/stylegan and put it into "data" folder. 
 
-    Download "vgg16.py" from https://github.com/machrisaa/tensorflow-vgg and put it into the repository root directory. 
-
     Download pretrained vgg16 model from https://github.com/machrisaa/tensorflow-vgg and put it into "data" folder.
 
 - If you want to experiment with wood, metal and stone texture images:
 
     Download pretrained GAN models from ***** and put them into "data" folder. 
 
-##### Configuration
+#### Configuration
 - Modify the "config.py" file.
 
     Change the variable "outputroot" to a directory to which you want to write output files. 
@@ -64,7 +61,7 @@ If you use our code or models, please cite:
       g++ ./expand.cpp -o expand.so
 
 ### Run the system.
-##### Step 1: Start the dataset curation system. 
+#### Step 1: Start the dataset curation system. 
 Run "main_ui.py" to start the system. Example:
 
       python main_ui.py -datatype face -enable_simul 1 -gpuid 0 -experiment_name curation_face
@@ -79,18 +76,18 @@ All Arguments are optional and can be omitted.
 
 By default, the interactive system will run on port 5001, which can be changed in "main_ui.py".
 
-Wait until the system initialzation finishes. At that point, you should see "Running on https://0.0.0.0:5001/ (Press CTRL+C to quit)" in the console. 
+Wait until the system initialzation finishes. At that point, you should see "Running on http://0.0.0.0:5001/ (Press CTRL+C to quit)" in the console. 
 
-Note: FFHQ data source needs heavy precomputation in the first run and will take a long time. 
+Note: FFHQ data source needs heavy precomputation in the first run which will take a long time. 
 
-##### Step 2: Interactive label the images. 
-Use a modern browser to visit "https://**#computer#**:5001/home", follow the UI to label the images. 
+#### Step 2: Interactive label the images. 
+Use a modern browser to visit "http://**#computer#**:5001/home", follow the UI to label the images. 
 
 **#computer#** should be substituted with the server name or IP address if the system is running on a remote server, or "localhost" if it is running locally. 
 
 After several rounds, you can stop labelling and go to the next step. After the training of each round, a user-intent classifier model will be saved in the output folder. 
 
-##### Step 3: Finetune the original GAN model. 
+#### Step 3: Finetune the original GAN model. 
 For FFHQ face or bedroom (StyleGAN models), an example for running the finetuning is:
 
       python filter_and_train.py -datatype face -classifier_model PATH_TO_CLASSIFIER_MODEL -gpuid 0
@@ -102,6 +99,13 @@ For texture models, an example for running the finetuning is:
 Argument "classifier_model" is the path to the user-intent classifier model obtained in step 2, which should have the form ".../model.ckpt".
 
 The system will generate the dataset for finetuning and run the GAN finetuning. After it finishes, you will get the finetuned model and some samples in a folder created under the "outputroot" directory. 
+
+### Suggestions for using the system on your own data
+You will need to modify the code to run the system for a new dataset. Following is the parts that may need changes:
+- Load your own dataset into the system. 
+- Use feature embedding to make the training more efficient. For example, we use FaceNet for face images, and VGG for bedroom images. If you work with natural images, you can just use the VGG embedding implementation. If you do not want an embedding, you can use the implementation for texture images. 
+- Use a suitable classifier. If you use feature embedding, the classifier could be simple, such as several layers of FC. If you do not use embedding, the classifier could be a suitable ConvNet. 
+
 
 ## Acknowledgement
 [StyleGAN](https://github.com/NVlabs/stylegan) related code in this repository is provided by NVIDIA under Creative Commons Attribution-NonCommercial 4.0 International License (http://creativecommons.org/licenses/by-nc/4.0/). We made modifications on the original code. 

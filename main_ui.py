@@ -1,6 +1,6 @@
 # run this code and visit by browser https://$your-server-name-or-ip$:5001/main
 from flask import Flask, request, render_template, jsonify
-import ssl
+#import ssl
 import time
 import argparse
 import os
@@ -19,8 +19,8 @@ from config import outputroot
 outputpath = os.path.join(outputroot, argsk.experiment_name)
 os.makedirs(outputpath, exist_ok=True)
 
-context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-context.load_cert_chain('cert.cert', 'key.key')
+#context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+#context.load_cert_chain('cert.cert', 'key.key')
 app = Flask(__name__)
 app.secret_key = b'\x05:#\xe9\xb0fe\xe7\x96\x0fi\xeb\x7fF\xc1\xda'
 
@@ -76,5 +76,5 @@ def main():
     return render_template('index.html')
 
 
-app.run(host='0.0.0.0', port='5001', debug=False, ssl_context=context)
-#app.run(host='0.0.0.0', port='5001', debug=False)
+#app.run(host='0.0.0.0', port='5001', debug=False, ssl_context=context)
+app.run(host='0.0.0.0', port='5001', debug=False)
