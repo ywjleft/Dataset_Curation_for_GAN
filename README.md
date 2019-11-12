@@ -9,7 +9,7 @@ This repository provides a reference implementation for the PG 2019 paper "Inter
 More information (including a copy of the paper) can be found at http://msraig.info/~Curation/Curation.htm.
 
 ## Citation
-If you use our code or models, please cite:
+If you use our code, please consider citing:
 
 ```
 @article{Ye:2019:ICD, 
@@ -26,7 +26,8 @@ If you use our code or models, please cite:
 ## Usage
 
 ### System requirements
-- A Linux system with python Tensorflow-GPU environment. 
+- A Linux system with python Tensorflow-GPU environment. The code is tested with Ubuntu 16.04, CUDA 9.0, Tensorflow-GPU 1.11, Python 3.5.2, but should also support a large range of other versions. 
+- Install necessary python packages if missing, such as NumPy, OpenCV-Python, Pillow. 
 
 ### Preparations
 #### Prepare necessary code and data.
@@ -58,7 +59,7 @@ If you use our code or models, please cite:
 
 - (Conditional) If during running the pre-compiled "expand.so" works incorrect, please compile it yourself. 
 
-      g++ ./expand.cpp -o expand.so
+      g++ -std=c++11 -fPIC -shared -o expand.so expand.cpp
 
 ### Run the system.
 #### Step 1: Start the dataset curation system. 
