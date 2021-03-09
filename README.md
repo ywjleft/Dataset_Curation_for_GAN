@@ -6,7 +6,7 @@ The main contributors of this repository include Wenjie Ye, [Yue Dong](http://yu
 
 This repository provides a reference implementation for the PG 2019 paper "Interactive Curation of Datasets for Training and Refining Generative Models".
 
-More information (including a copy of the paper) can be found at http://msraig.info/~Curation/Curation.htm.
+More information (including a copy of the paper) can be found at http://yuedong.shading.me/project/curation/curation.htm.
 
 ## Citation
 If you use our code, please consider citing:
